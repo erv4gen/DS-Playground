@@ -59,9 +59,6 @@
 # In[ ]:
 
 
-def answer_one():
-    return "ANSWER"
-
 
 # ### Question 2 (6.6%)
 # The previous question joined three datasets then reduced this to just the top 15 entries. When you joined the datasets, but before you reduced this to the top 15 items, how many entries did you lose?
