@@ -4,9 +4,9 @@ import numpy as np
 
 filepath= './data/Energy Indicators.xls'
 
-energy = pd.read_excel(filepath,header=16,skip_footer=38)
-
-(energy.index.set_index())
+energy = pd.read_excel(filepath)
+energy = energy[16:243]
+energy = energy.drop(energy.columns[[0, 1]], axis=1)
 
 print(energy.columns)
 
