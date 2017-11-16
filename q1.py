@@ -1,16 +1,19 @@
-import csv
-import pip
-import os
 import pandas as pd
 import numpy as np
 
 
 filepath= './data/Energy Indicators.xls'
 
-imp1 = pd.ExcelFile(filepath)
-Energysh = imp1.parse(0)
+energy = pd.read_excel(filepath,header=16,skip_footer=38)
 
-print(Energysh.head)
+(energy.index.set_index())
+
+print(energy.columns)
+
+
+
+energy.to_csv('./data/exti.csv')
+
 
 def answer_one():
     return "ANSWER"
