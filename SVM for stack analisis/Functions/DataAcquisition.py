@@ -38,3 +38,6 @@ def quandl_stocks_host_price(symbol, date='2008-01-02'):
         return new_responce
     else:
         return responce['Adj. Close'].item()
+    
+    
+  

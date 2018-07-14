@@ -1,5 +1,5 @@
 Date,Unix,Ticker,Total Debt/Equity (mrq),Stock Price,Stock Change,SNP500 Value,SNP500 Change,YtY Stock Price Change,YtY SNP500 Value Change,Absolute Stock Perfomance,YtY Stock Perfomance,Absolute Difference,YtY Difference,Status
-2013-05-23 20:50:51,1369360251.0,aes,279.88,11.266929983344,84.66013552717818,1650.51001,60.26703388494326,"Empty DataFrame
+2013-09-01 04:25:11,1378027511.0,aa,52.71,32.864204641452,30.686335377261027,1638.170044,46.32889558968069,"Empty DataFrame
 Columns: [index, Date, Unix, Ticker, Total Debt/Equity (mrq), Stock Price, Stock Change, SNP500 Value, SNP500 Change, YtY Stock Price Change, YtY SNP500 Value Change, Absolute Stock Perfomance, YtY Stock Perfomance, Absolute Difference, YtY Difference, Status]
 Index: []","Empty DataFrame
 Columns: [index, Date, Unix, Ticker, Total Debt/Equity (mrq), Stock Price, Stock Change, SNP500 Value, SNP500 Change, YtY Stock Price Change, YtY SNP500 Value Change, Absolute Stock Perfomance, YtY Stock Perfomance, Absolute Difference, YtY Difference, Status]
@@ -9,4 +9,4 @@ Index: []",,"Empty DataFrame
 Columns: [index, Date, Unix, Ticker, Total Debt/Equity (mrq), Stock Price, Stock Change, SNP500 Value, SNP500 Change, YtY Stock Price Change, YtY SNP500 Value Change, Absolute Stock Perfomance, YtY Stock Perfomance, Absolute Difference, YtY Difference, Status]
 Index: []","Empty DataFrame
 Columns: [index, Date, Unix, Ticker, Total Debt/Equity (mrq), Stock Price, Stock Change, SNP500 Value, SNP500 Change, YtY Stock Price Change, YtY SNP500 Value Change, Absolute Stock Perfomance, YtY Stock Perfomance, Absolute Difference, YtY Difference, Status]
-Index: []",1
+Index: []",0
