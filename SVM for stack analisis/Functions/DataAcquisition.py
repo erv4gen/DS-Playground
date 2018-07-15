@@ -6,7 +6,7 @@ import os
 from bs4 import BeautifulSoup
 import quandl
 from time import mktime
-
+import numpy as np
 
 
 def quandl_stocks_host_price(symbol, date='2008-01-02'):
@@ -66,7 +66,7 @@ def GetStats(gathers = None,path='', limit = None):
         return None
     #INIT Data##################
     columns = ['Date',
-                'Unix',
+                'UNIX',
                 'Ticker']
     columns.extend(gathers)
     
@@ -125,10 +125,110 @@ def GetStats(gathers = None,path='', limit = None):
                     
                     #Get stock price for spesific date
                     new_row = {**{'Date':date_stamp,
-                                    'Unix':unix_time,
+                                    'UNIX':unix_time,
                                     'Ticker':ticker,
                                    },**values}
                     df = df.append(new_row,ignore_index=True)
                 except Exception as e:
                     print(e)
     return df
+
+
+
+
+
+def get_stock_perfomance(symbol,date_range):
+    '''Return the historic stock price of selected ticker
+    input: symbol = 'ABC' ; date_range = pd.Series of dates in UNIX format
+    if input date is weekend will return closest workday.
+    
+    output: pd.Dataframe of stock prices and SNP500 index perfomance.
+    
+    '''
+    df = pd.DataFrame(columns=[
+                               'Ticker',
+                                'UNIX',
+                              'SNPDate',
+                              'SNPValue',
+                              'StockPrice',
+                               'Absolute_SNP500_Perfomance',
+                               'YtY_Stock_Price_Value_Change',
+                               'YtY_SNP500_Value_Change',
+                                'Absolute_Stock_Perfomance',
+                               'Absolute_Stock_Perfomance_Flag',
+                                'YtY_Stock_Perfomance',
+                               'YtY_Stock_Perfomance_Flag'
+                              ])
+    starting_stock_value = False
+    starting_sp_500_value = False
+    i = 0
+    snp500 = pd.read_csv(r'c:\Users\15764\Documents\Datasets\intraQuarter\YAHOO-INDEX_GSPC.csv', index_col=0)
+
+    print("Getting Stock Price Data...")
+    for unix_time in tqdm(date_range):
+        
+        try:
+            snp500_data = datetime.fromtimestamp(unix_time).strftime('%Y-%m-%d')
+            row = snp500[snp500.index==snp500_data]
+            snp500_value = float(row['Adj Close'])
+
+        except:
+            snp500_data = datetime.fromtimestamp(unix_time-259200).strftime('%Y-%m-%d')
+            row = snp500[snp500.index==snp500_data]
+            snp500_value = float(row['Adj Close'])
+
+        stock_price = quandl_stocks_host_price(symbol=symbol,date=snp500_data)
+        
+        if not starting_stock_value and not starting_sp_500_value:
+            stock_change_abs = 0
+            snp500_change_abs = 0
+            
+            yty_pr_change = 0
+            yty_snp_change = 0
+            abs_stock_perf_flag = 0
+            yty_perf_flag = 0
+            
+            starting_sp_500_value = snp500_value
+            starting_stock_value = stock_price
+            
+        else:
+            stock_change_abs = 100*(stock_price -starting_stock_value) / starting_stock_value #absolute stock change 
+            snp500_change_abs = 100*(snp500_value - starting_sp_500_value) / starting_sp_500_value # absoulte snp500 change
+            
+            yty_pr_change = 100*(stock_price -df.loc[i-1,'StockPrice']) / df.loc[i-1,'StockPrice'] #'YtY Stock Price Value Change'
+            yty_snp_change = 100*(snp500_value -df.loc[i-1,'SNPValue']) / df.loc[i-1,'SNPValue'] #'YtY SNP500 Value Change'
+
+        #'Absolute Difference - abs price perfomance minus abs snp500 perfomance'
+        abs_difference_in_perfomance_pr_vs_snp = stock_change_abs-snp500_change_abs
+        #'YearToYear Difference - yty price % change minus yty snp500 % change
+        YtYDifference_in_perfomance_pr_vs_snp = yty_pr_change - yty_snp_change
+        
+        abs_stock_perf_flag =  int(np.where( (stock_change_abs-snp500_change_abs)>0,1,0 ))#'Absolute Stock Perfomance Comparing to SNP500 Index Flag - 1 if outperfom snp500 ; 0 is underperform',
+        yty_perf_flag =  int(np.where( (yty_pr_change -yty_snp_change) >0 , 1,0 )) #'YtY Stock Perfomance Flag - 1 if outperfom snp500 ; 0 is underperform'
+        
+        
+        Status = np.where((stock_change_abs - snp500_change_abs) >0,1,0) #1 - outperform, 0 - ounderperform
+        df = df.append({'Ticker': symbol,
+                        'UNIX': unix_time,
+                      'SNPDate' :snp500_data,
+                      'SNPValue' : snp500_value,
+                      'StockPrice' : stock_price,
+                       'Absolute_Stock_Perfomance' :stock_change_abs ,
+                       'Absolute_SNP500_Perfomance' : snp500_change_abs,
+                       'YtY_Stock_Price_Value_Change' : yty_pr_change,
+                       'YtY_SNP500_Value_Change': yty_snp_change,
+                        'Absolute_Stock_Perfomance': abs_difference_in_perfomance_pr_vs_snp,
+                       'Absolute_Stock_Perfomance_Flag': abs_stock_perf_flag,
+                         'YtY_Stock_Perfomance': YtYDifference_in_perfomance_pr_vs_snp,
+                       'YtY_Stock_Perfomance_Flag' : yty_perf_flag},
+                       ignore_index=True)
+        i+=1
+    save = "PriceVsSNP500.csv"
+    print('Will save to file: ',save)
+    df.to_csv(save,index=False)
+    return df
+
+
+
+
+
