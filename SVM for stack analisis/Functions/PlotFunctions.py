@@ -12,12 +12,12 @@ def plot_df(df):
         for ticker in df.Ticker.unique():
             plot_df = df[df['Ticker']==ticker]
             plot_df = plot_df.set_index(['Date'])
-            if plot_df['Status'][-1]>0:
+            if plot_df['Absolute_Stock_Perfomance_Flag'][-1]>0:
                 color = 'g'
             else:
                 color = 'r'
 
-            plot_df['Absolute Difference'].plot(label=ticker,color=color)
+            plot_df['Absolute_Stock_Perfomance'].plot(label=ticker,color=color)
             ax = plt.gca()
             ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         plt.ylabel('Absolute Difference')

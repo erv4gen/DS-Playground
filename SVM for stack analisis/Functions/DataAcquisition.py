@@ -36,7 +36,7 @@ def quandl_stocks_host_price(symbol, date='2008-01-02'):
             new_date[2] -=2
         else:
             new_date[2] +=2
-        new_date = '-'.join([str(x) for x in x1])
+        new_date = '-'.join([str(x) for x in new_date])
         new_responce = quandl.get(query_list, 
             returns='pandas', 
             start_date=date,
@@ -96,7 +96,7 @@ def GetStats(gathers = None,path='', limit = None):
         
         if len(each_file)>0:
             #Get all historic data 
-            for file in tqdm(each_file):
+            for file in each_file:
                 
                 date_stamp = datetime.strptime(file,'%Y%m%d%H%M%S.html')
                 unix_time = time.mktime(date_stamp.timetuple())
