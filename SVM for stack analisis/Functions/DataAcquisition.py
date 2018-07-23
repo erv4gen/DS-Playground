@@ -22,39 +22,36 @@ def quandl_stocks_host_price(symbol, date='2008-01-02'):
  
     end_date defaults to the current date when None
     """
+    #ipdb.set_trace()
     quandl.ApiConfig.api_key = '3epFW-eMFHf54_jpDFyS'
     query_list = 'WIKI' + '/' + symbol
+    def get_quote(date):
+        responce = quandl.get(query_list, 
+                returns='pandas', 
+                start_date=date,
+                end_date=date,
+                collapse='daily',
+                order='asc'
+                )
+        return responce
     
-    responce = quandl.get(query_list, 
-            returns='pandas', 
-            start_date=date,
-            end_date=date,
-            collapse='daily',
-            order='asc'
-            )
+    for i in range(4):
+        responce = get_quote(date)
+        if responce.shape[0]==0:
+            date = [int(x) for x in date.split('-')] 
+            if date[2]>3:
+                date[2] -=1
+            else:
+                date[2] +=1
+            date = '-'.join([str(x) for x in date])
+        else:
+            break
+            
     if responce.shape[0]==0:
-        new_date = [int(x) for x in date.split('-')] 
-        if new_date[2]<21:
-            new_date[2] +=3
-        else:
-            new_date[2] -=3
-        new_date = '-'.join([str(x) for x in new_date])
-        new_responce = quandl.get(query_list, 
-            returns='pandas', 
-            start_date=date,
-            end_date=new_date,
-            collapse='daily',
-            order='asc'
-            )
-        if new_responce.shape[0]==0:
-            raise ValueError('Data not found for this day(weekend adj.)')
-        else:
-            ipdb.set_trace
-            return new_responce['Adj. Close'].item()
+        raise ValueError('Data not found for this day(weekend adj.)')
     else:
         return responce['Adj. Close'].item()
-    
-    
+
     
     
     
