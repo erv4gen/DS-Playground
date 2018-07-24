@@ -11,7 +11,7 @@ import numpy as np
 
 import ipdb
 
-def quandl_stocks_host_price(symbol, date='2008-01-02'):
+def quandl_stocks_host_price(symbol, date='2008-01-02', n=10):
     """
     ===---This function returns the Historical quotes of the selected ticket---===
     
@@ -23,6 +23,7 @@ def quandl_stocks_host_price(symbol, date='2008-01-02'):
     end_date defaults to the current date when None
     """
     #ipdb.set_trace()
+    print('Getting quots \nTicker: ',symbol,'\nDate: ',date)
     quandl.ApiConfig.api_key = '3epFW-eMFHf54_jpDFyS'
     query_list = 'WIKI' + '/' + symbol
     def get_quote(date):
@@ -35,9 +36,13 @@ def quandl_stocks_host_price(symbol, date='2008-01-02'):
                 )
         return responce
     
-    for i in range(4):
-        responce = get_quote(date)
+    for i in range(n):
+        try:
+            responce = get_quote(date)
+        except:
+            responce = np.array([])
         if responce.shape[0]==0:
+            print('Wrong Day, Cheching Next')
             date = [int(x) for x in date.split('-')] 
             if date[2]>3:
                 date[2] -=1
@@ -45,9 +50,11 @@ def quandl_stocks_host_price(symbol, date='2008-01-02'):
                 date[2] +=1
             date = '-'.join([str(x) for x in date])
         else:
+            print('Quote Loaded')
             break
             
     if responce.shape[0]==0:
+        print('Reached Limit amount of tries')
         raise ValueError('Data not found for this day(weekend adj.)')
     else:
         return responce['Adj. Close'].item()
@@ -175,40 +182,14 @@ def get_stock_perfomance(symbol,date_range):
                 #ipdb.set_trace()
                 unix_time += 129600
             snp500_data = datetime.fromtimestamp(unix_time).strftime('%Y-%m-%d')
-            
             row = snp500[snp500.index==snp500_data]
             snp500_value = float(row['Adj Close'])
-
-        except:
-            pass                                                
-            '''try:
-                print('2nd try - Getting 2 days-before date instead')
-                snp500_data = datetime.fromtimestamp(unix_time-259200).strftime('%Y-%m-%d')
-                row = snp500[snp500.index==snp500_data]
-                snp500_value = float(row['Adj Close'])
-            
-            except:
-                print('3rd try - Getting 3 days after date')
-                snp500_data = datetime.fromtimestamp(unix_time+388800).strftime('%Y-%m-%d')
-                row = snp500[snp500.index==snp500_data]
-                try:
-                    snp500_value = float(row['Adj Close'])
-                except:
-                    
-        
-        '''
-        try:
             stock_price = quandl_stocks_host_price(symbol=symbol,date=snp500_data)
         except:
-            print('Cannot Get data from Quandl\nTry Closest Date(+1day)')
-            new_date = [int(x) for x in snp500_data.split('-')] 
-            if new_date[2]<28:
-                new_date[2] +=1
-            else:
-                new_date[2] -=1
-            new_date = '-'.join([str(x) for x in new_date])
-            stock_price = quandl_stocks_host_price(symbol=symbol,date=new_date)
-            #ipdb.set_trace()
+            print('Cannot Get data from Quandl. Skipping this one')
+            continue
+            
+            ipdb.set_trace()
         
         if not starting_stock_value and not starting_sp_500_value:
             stock_change_abs = 0
@@ -234,10 +215,7 @@ def get_stock_perfomance(symbol,date_range):
         #'YearToYear Difference - yty price % change minus yty snp500 % change
         YtYDifference_in_perfomance_pr_vs_snp = yty_pr_change - yty_snp_change
         
-        try:
-            abs_stock_perf_flag =  int(np.where( (stock_change_abs-snp500_change_abs)>0,1,0 ))#'Absolute Stock Perfomance Comparing to SNP500 Index Flag - 1 if outperfom snp500 ; 0 is underperform',
-        except:
-            ipdb.set_trace()
+        abs_stock_perf_flag =  int(np.where( (stock_change_abs-snp500_change_abs)>0,1,0 ))#'Absolute Stock Perfomance Comparing to SNP500 Index Flag - 1 if outperfom snp500 ; 0 is underperform',
         yty_perf_flag =  int(np.where( (yty_pr_change -yty_snp_change) >0 , 1,0 )) #'YtY Stock Perfomance Flag - 1 if outperfom snp500 ; 0 is underperform'
         
         
