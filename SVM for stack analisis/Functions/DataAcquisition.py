@@ -145,7 +145,7 @@ def GetStats(gathers = None,path='', limit = None):
 
 
 
-def get_stock_perfomance(symbol,date_range):
+def get_stock_perfomance(symbol=None,date_range=None,snppath=r'c:\data\Datasets\intraQuarter\YAHOO-INDEX_GSPC.csv'):
     '''Return the historic stock price of selected ticker
     input: symbol = 'ABC' ; date_range = pd.Series of dates in UNIX format
     if input date is weekend will return closest workday.
@@ -170,7 +170,7 @@ def get_stock_perfomance(symbol,date_range):
     starting_stock_value = False
     starting_sp_500_value = False
     i = 0
-    snp500 = pd.read_csv(r'c:\Datasets\intraQuarter\YAHOO-INDEX_GSPC.csv', index_col=0)
+    snp500 = pd.read_csv(snppath, index_col=0)
 
     print("Getting Stock Price Data...")
     for unix_time in tqdm(date_range):
@@ -235,7 +235,7 @@ def get_stock_perfomance(symbol,date_range):
                        'YtY_Stock_Perfomance_Flag' : yty_perf_flag},
                        ignore_index=True)
         i+=1
-    save = "PriceVsSNP500_"+str(symbol)+".csv"
+    save = r"c:\data\finml\PriceVsSNP500_"+str(symbol)+".csv"
     print('Will save to file: ',save)
     df.to_csv(save,index=False)
     return df

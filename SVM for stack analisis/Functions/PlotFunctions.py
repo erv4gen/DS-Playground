@@ -5,8 +5,8 @@ from matplotlib import style
 
 
 
-def plot_df(df):
-    plt.figure(figsize=(15,10))
+def plot_df(df,figsize=(15,10)):
+    plt.figure(figsize=figsize)
     plt.title("The 'Absolute Difference' Perfomance")
     try:
         for ticker in df.Ticker.unique():
