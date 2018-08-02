@@ -122,7 +122,10 @@ def GetStats(gathers = None,path='', limit = None):
 
                     for gather in  gathers:
                         try:
-                            value = data[data.index(gather+':')+1]
+                            #value = data[data.index(gather+':')+1]
+                            #import ipdb 
+                            #ipdb.set_trace()
+                            value = [x for x in data if gather in x][0]
                             if '%' in value:
                                 value = float(value.strip('%')) / 100.
                             else:

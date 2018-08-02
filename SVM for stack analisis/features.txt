@@ -1,5 +1,5 @@
 DE Ratio
-Trailing P/E
+Trailing P/E 
 Price/Sales
 Price/Book
 Profit Margin
@@ -32,4 +32,4 @@ Held by Institutions
 Shares Short (as of
 Short Ratio
 Short % of Float
-Shares Short (prior 
+Shares Short
